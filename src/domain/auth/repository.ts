@@ -19,7 +19,7 @@ const mapCaregiver = (row: CaregiverRow): CaregiverProfile => ({
 
 export const findCaregiverByEmail = async (client: SupabaseClient, email: string) => {
   const { data, error } = await client
-    .from<CaregiverRow>("caregivers")
+    .from("caregivers")
     .select("*")
     .eq("email", email)
     .single();
@@ -28,12 +28,12 @@ export const findCaregiverByEmail = async (client: SupabaseClient, email: string
     throw error;
   }
 
-  return data ? mapCaregiver(data) : null;
+  return data ? mapCaregiver(data as CaregiverRow) : null;
 };
 
 export const findCaregiverById = async (client: SupabaseClient, id: string) => {
   const { data, error } = await client
-    .from<CaregiverRow>("caregivers")
+    .from("caregivers")
     .select("*")
     .eq("id", id)
     .single();
@@ -42,7 +42,7 @@ export const findCaregiverById = async (client: SupabaseClient, id: string) => {
     throw error;
   }
 
-  return mapCaregiver(data);
+  return mapCaregiver(data as CaregiverRow);
 };
 
 export const createCaregiver = async (
@@ -50,7 +50,7 @@ export const createCaregiver = async (
   payload: { authUserId: string; fullName: string; email: string }
 ) => {
   const { data, error } = await client
-    .from<CaregiverRow>("caregivers")
+    .from("caregivers")
     .insert({
       auth_user_id: payload.authUserId,
       full_name: payload.fullName,
@@ -63,7 +63,7 @@ export const createCaregiver = async (
     throw error;
   }
 
-  return mapCaregiver(data);
+  return mapCaregiver(data as CaregiverRow);
 };
 
 export const insertConsent = async (

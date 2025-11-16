@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
 import { loginSchema } from "@/src/domain/auth/schemas";
 import { loginCaregiver } from "@/src/domain/auth/service";
-import { ValidationError } from "@/src/lib/errors";
-import { respond } from "@/src/lib/api-response";
-import { handleRouteError } from "@/src/lib/route-error";
-import { setSessionCookie } from "@/src/lib/session-cookie";
+import { ValidationError } from "@/lib/errors";
+import { respond } from "@/lib/api-response";
+import { handleRouteError } from "@/lib/route-error";
+import { setSessionCookie } from "@/lib/session-cookie";
 
 const path = "/api/v1/auth/login";
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { clearSessionCookie } from "@/src/lib/session-cookie";
-import { respond } from "@/src/lib/api-response";
+import { clearSessionCookie } from "@/lib/session-cookie";
+import { respond } from "@/lib/api-response";
 
 const path = "/api/v1/auth/logout";
 
