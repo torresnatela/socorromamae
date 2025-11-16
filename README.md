@@ -33,12 +33,12 @@ docs/                # Requirements + stories
 | `LGPD_CONSENT_VERSION` | Version string logged whenever LGPD terms are accepted |
 | `PASSWORD_RESET_REDIRECT_URL` | URL Supabase uses when caregiver clicks reset link |
 
+### Testing & QA
+
+Backend unit tests run via `pnpm test` (Vitest + Testing Library). API smoke tests with Playwright are pending (see Story 1.1 Testing section).
+
 ## Auth API
 
 The backend exposes `/api/v1/auth/{signup,login,logout,me,refresh,password-reset,password-reset/confirm}`. Payloads and curl examples are at `docs/api/authentication.md`.
 
 Populate `.env` locally and avoid committing secrets. Once the app grows, we can introduce stricter tooling again.
-
-## Auth API
-
-The backend currently exposes `/api/v1/auth/{signup,login,logout,me}`. Payloads, response envelope, and curl examples live in `docs/api/authentication.md`.
