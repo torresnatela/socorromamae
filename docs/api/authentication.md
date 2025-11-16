@@ -162,6 +162,23 @@ Response:
 
 Configure `PASSWORD_RESET_REDIRECT_URL` so Supabase directs users back to your App Router page to finish the reset.
 
+### POST `/api/v1/auth/password-reset/confirm`
+
+Used by the reset page after Supabase redirects the caregiver with an `access_token` query param. Provide the token and the new password:
+
+```json
+{ "accessToken": "<from URL>", "password": "NewPassword123" }
+```
+
+Response mirrors the request endpoint:
+
+```json
+{
+  "meta": { ... },
+  "data": { "success": true }
+}
+```
+
 ## Testing via cURL
 
 ```bash

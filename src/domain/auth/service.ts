@@ -9,10 +9,12 @@ import {
 } from "./repository";
 import {
   LoginInput,
+  PasswordResetConfirmInput,
   PasswordResetRequestInput,
   RefreshSessionInput,
   SignupInput
 } from "./schemas";
+import { decodeJwt } from "jose";
 import { AuthResponsePayload, SubscriptionSnapshot } from "./types";
 
 const consentVersion = () => process.env.LGPD_CONSENT_VERSION ?? "v1";
@@ -172,6 +174,28 @@ export const requestPasswordReset = async (input: PasswordResetRequestInput) => 
   const redirectTo = process.env.PASSWORD_RESET_REDIRECT_URL;
   const { error } = await client.auth.resetPasswordForEmail(input.email, {
     redirectTo: redirectTo && redirectTo.length > 0 ? redirectTo : undefined
+  });
+
+  if (error) {
+    throw new ApplicationError("password_reset_failed", error.message);
+  }
+};
+
+export const confirmPasswordReset = async (input: PasswordResetConfirmInput) => {
+  let payload: { sub?: string };
+  try {
+    payload = decodeJwt(input.accessToken);
+  } catch (error) {
+    throw new UnauthorizedError("Invalid access token.");
+  }
+
+  if (!payload.sub) {
+    throw new UnauthorizedError("Missing token subject.");
+  }
+
+  const adminClient = createSupabaseAdminClient();
+  const { error } = await adminClient.auth.admin.updateUserById(payload.sub, {
+    password: input.password
   });
 
   if (error) {

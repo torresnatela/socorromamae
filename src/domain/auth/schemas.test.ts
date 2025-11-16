@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   loginSchema,
+  passwordResetConfirmSchema,
   passwordResetRequestSchema,
   refreshSessionSchema,
   signupSchema
@@ -40,6 +41,16 @@ describe("refreshSessionSchema", () => {
 describe("passwordResetRequestSchema", () => {
   it("validates email", () => {
     const parsed = passwordResetRequestSchema.safeParse({ email: "invalid" });
+    expect(parsed.success).toBe(false);
+  });
+});
+
+describe("passwordResetConfirmSchema", () => {
+  it("validates token and password", () => {
+    const parsed = passwordResetConfirmSchema.safeParse({
+      accessToken: "token",
+      password: "short"
+    });
     expect(parsed.success).toBe(false);
   });
 });
