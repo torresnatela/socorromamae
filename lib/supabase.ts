@@ -1,25 +1,39 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+type SupabaseEnv = {
+  url: string;
+  anonKey: string;
+  serviceRoleKey?: string;
+};
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    "Supabase environment variables are missing. Please configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
-  );
-}
+const readSupabaseEnv = (): SupabaseEnv => ({
+  url: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+  anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+  serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY
+});
 
-export const supabaseBrowserClient = createClient(supabaseUrl, supabaseAnonKey);
+export const createSupabaseBrowserClient = () => {
+  const { url, anonKey } = readSupabaseEnv();
 
-export const createSupabaseAdminClient = () => {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceRoleKey) {
+  if (!url || !anonKey) {
     throw new Error(
-      "SUPABASE_SERVICE_ROLE_KEY is required for server actions."
+      "Supabase environment variables are missing. Configure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY."
     );
   }
 
-  return createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
+  return createClient(url, anonKey);
+};
+
+export const createSupabaseAdminClient = () => {
+  const { url, anonKey, serviceRoleKey } = readSupabaseEnv();
+
+  if (!url || !anonKey || !serviceRoleKey) {
+    throw new Error(
+      "Supabase environment variables are missing. Configure NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY."
+    );
+  }
+
+  return createClient(url, serviceRoleKey, {
+    auth: { persistSession: false }
   });
 };
