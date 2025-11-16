@@ -12,7 +12,7 @@ const readSupabaseEnv = (): SupabaseEnv => ({
   serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY
 });
 
-export const createSupabaseBrowserClient = () => {
+const ensureAnonEnv = () => {
   const { url, anonKey } = readSupabaseEnv();
 
   if (!url || !anonKey) {
@@ -21,8 +21,15 @@ export const createSupabaseBrowserClient = () => {
     );
   }
 
-  return createClient(url, anonKey);
+  return { url, anonKey };
 };
+
+export const createSupabaseAnonClient = () => {
+  const { url, anonKey } = ensureAnonEnv();
+  return createClient(url, anonKey, { auth: { persistSession: false } });
+};
+
+export const createSupabaseBrowserClient = createSupabaseAnonClient;
 
 export const createSupabaseAdminClient = () => {
   const { url, anonKey, serviceRoleKey } = readSupabaseEnv();
