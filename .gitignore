@@ -1,1 +1,10 @@
 # BMAD (local only)
+.env
+.env.local
+.env.*.local
+.DS_Store
+node_modules
+.next
+out
+dist
+.vercel
