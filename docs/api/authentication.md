@@ -131,6 +131,37 @@ If the cookie is missing or the token is invalid/expired, the route returns:
 }
 ```
 
+### POST `/api/v1/auth/refresh`
+
+Reissues the session cookie for active caregivers. Requires an existing `sm.session` cookie.
+
+Request body (optional):
+
+```json
+{ "keepSignedIn": true }
+```
+
+Response matches `/auth/me`. If the cookie is missing or expired, the route responds with `401 unauthorized`.
+
+### POST `/api/v1/auth/password-reset`
+
+Triggers Supabase's password reset email flow.
+
+```json
+{ "email": "caregiver@example.com" }
+```
+
+Response:
+
+```json
+{
+  "meta": { ... },
+  "data": { "success": true }
+}
+```
+
+Configure `PASSWORD_RESET_REDIRECT_URL` so Supabase directs users back to your App Router page to finish the reset.
+
 ## Testing via cURL
 
 ```bash
@@ -150,6 +181,16 @@ curl http://localhost:3000/api/v1/auth/me -b cookies.txt
 
 # Logout
 curl -X POST http://localhost:3000/api/v1/auth/logout -b cookies.txt
+
+# Refresh
+curl -X POST http://localhost:3000/api/v1/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"keepSignedIn":true}' -b cookies.txt
+
+# Password reset request
+curl -X POST http://localhost:3000/api/v1/auth/password-reset \
+  -H "Content-Type: application/json" \
+  -d '{"email":"caregiver@example.com"}'
 ```
 
 > **Local HTTPS note:** the session cookie only uses the `Secure` flag in production builds, so everything works over plain HTTP (`next dev`). On Vercel the cookie switches to HTTPS-only automatically.
