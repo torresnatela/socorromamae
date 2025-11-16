@@ -208,6 +208,11 @@ curl -X POST http://localhost:3000/api/v1/auth/refresh \
 curl -X POST http://localhost:3000/api/v1/auth/password-reset \
   -H "Content-Type: application/json" \
   -d '{"email":"caregiver@example.com"}'
+
+# Password reset confirm
+curl -X POST http://localhost:3000/api/v1/auth/password-reset/confirm \
+  -H "Content-Type: application/json" \
+  -d '{"accessToken":"ACCESS_TOKEN","password":"NewPassword123"}'
 ```
 
 > **Local HTTPS note:** the session cookie only uses the `Secure` flag in production builds, so everything works over plain HTTP (`next dev`). On Vercel the cookie switches to HTTPS-only automatically.
