@@ -6,13 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.1",
+    "jose": "^5.9.3",
     "next": "14.2.11",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "ulid": "^2.3.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
@@ -20,6 +24,8 @@
     "@types/react-dom": "^18.3.0",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.11",
-    "typescript": "^5.5.4"
+    "tsx": "^4.20.6",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1"
   }
 }
