@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { loginSchema, signupSchema } from "./schemas";
+import {
+  loginSchema,
+  passwordResetConfirmSchema,
+  passwordResetRequestSchema,
+  refreshSessionSchema,
+  signupSchema
+} from "./schemas";
 
 describe("signupSchema", () => {
   it("requires LGPD acceptance", () => {
@@ -22,5 +28,29 @@ describe("loginSchema", () => {
     });
 
     expect(result.keepSignedIn).toBe(false);
+  });
+});
+
+describe("refreshSessionSchema", () => {
+  it("defaults keepSignedIn to false", () => {
+    const result = refreshSessionSchema.parse({});
+    expect(result.keepSignedIn).toBe(false);
+  });
+});
+
+describe("passwordResetRequestSchema", () => {
+  it("validates email", () => {
+    const parsed = passwordResetRequestSchema.safeParse({ email: "invalid" });
+    expect(parsed.success).toBe(false);
+  });
+});
+
+describe("passwordResetConfirmSchema", () => {
+  it("validates token and password", () => {
+    const parsed = passwordResetConfirmSchema.safeParse({
+      accessToken: "token",
+      password: "short"
+    });
+    expect(parsed.success).toBe(false);
   });
 });

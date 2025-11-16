@@ -31,6 +31,11 @@ docs/                # Requirements + stories
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only service role key used in API routes |
 | `AUTH_JWT_SECRET` | Secret used to sign caregiver session JWTs |
 | `LGPD_CONSENT_VERSION` | Version string logged whenever LGPD terms are accepted |
+| `PASSWORD_RESET_REDIRECT_URL` | URL Supabase uses when caregiver clicks reset link |
+
+## Auth API
+
+The backend exposes `/api/v1/auth/{signup,login,logout,me,refresh,password-reset,password-reset/confirm}`. Payloads and curl examples are at `docs/api/authentication.md`.
 
 Populate `.env` locally and avoid committing secrets. Once the app grows, we can introduce stricter tooling again.
 

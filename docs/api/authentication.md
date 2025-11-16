@@ -131,6 +131,54 @@ If the cookie is missing or the token is invalid/expired, the route returns:
 }
 ```
 
+### POST `/api/v1/auth/refresh`
+
+Reissues the session cookie for active caregivers. Requires an existing `sm.session` cookie.
+
+Request body (optional):
+
+```json
+{ "keepSignedIn": true }
+```
+
+Response matches `/auth/me`. If the cookie is missing or expired, the route responds with `401 unauthorized`.
+
+### POST `/api/v1/auth/password-reset`
+
+Triggers Supabase's password reset email flow.
+
+```json
+{ "email": "caregiver@example.com" }
+```
+
+Response:
+
+```json
+{
+  "meta": { ... },
+  "data": { "success": true }
+}
+```
+
+Configure `PASSWORD_RESET_REDIRECT_URL` so Supabase directs users back to your App Router page to finish the reset.
+
+### POST `/api/v1/auth/password-reset/confirm`
+
+Used by the reset page after Supabase redirects the caregiver with an `access_token` query param. Provide the token and the new password:
+
+```json
+{ "accessToken": "<from URL>", "password": "NewPassword123" }
+```
+
+Response mirrors the request endpoint:
+
+```json
+{
+  "meta": { ... },
+  "data": { "success": true }
+}
+```
+
 ## Testing via cURL
 
 ```bash
@@ -150,6 +198,21 @@ curl http://localhost:3000/api/v1/auth/me -b cookies.txt
 
 # Logout
 curl -X POST http://localhost:3000/api/v1/auth/logout -b cookies.txt
+
+# Refresh
+curl -X POST http://localhost:3000/api/v1/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"keepSignedIn":true}' -b cookies.txt
+
+# Password reset request
+curl -X POST http://localhost:3000/api/v1/auth/password-reset \
+  -H "Content-Type: application/json" \
+  -d '{"email":"caregiver@example.com"}'
+
+# Password reset confirm
+curl -X POST http://localhost:3000/api/v1/auth/password-reset/confirm \
+  -H "Content-Type: application/json" \
+  -d '{"accessToken":"ACCESS_TOKEN","password":"NewPassword123"}'
 ```
 
 > **Local HTTPS note:** the session cookie only uses the `Secure` flag in production builds, so everything works over plain HTTP (`next dev`). On Vercel the cookie switches to HTTPS-only automatically.

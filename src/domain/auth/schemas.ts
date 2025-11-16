@@ -21,5 +21,24 @@ export const loginSchema = z.object({
   keepSignedIn: z.boolean().optional().default(false)
 });
 
+export const refreshSessionSchema = z.object({
+  keepSignedIn: z.boolean().optional().default(false)
+});
+
+export const passwordResetRequestSchema = z.object({
+  email: z.string().email()
+});
+
+export const passwordResetConfirmSchema = z.object({
+  accessToken: z.string().min(10),
+  password: z
+    .string()
+    .min(8, "Password must contain at least 8 characters.")
+    .max(64)
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type RefreshSessionInput = z.infer<typeof refreshSessionSchema>;
+export type PasswordResetRequestInput = z.infer<typeof passwordResetRequestSchema>;
+export type PasswordResetConfirmInput = z.infer<typeof passwordResetConfirmSchema>;

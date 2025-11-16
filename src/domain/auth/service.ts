@@ -7,7 +7,14 @@ import {
   findCaregiverById,
   insertConsent
 } from "./repository";
-import { LoginInput, SignupInput } from "./schemas";
+import {
+  LoginInput,
+  PasswordResetConfirmInput,
+  PasswordResetRequestInput,
+  RefreshSessionInput,
+  SignupInput
+} from "./schemas";
+import { decodeJwt } from "jose";
 import { AuthResponsePayload, SubscriptionSnapshot } from "./types";
 
 const consentVersion = () => process.env.LGPD_CONSENT_VERSION ?? "v1";
@@ -127,4 +134,71 @@ export const getCurrentCaregiver = async (token: string): Promise<AuthResponsePa
     sessionExpiresAt: new Date(expirationUnix * 1000).toISOString(),
     subscription: buildSubscriptionStub()
   };
+};
+
+export const refreshSession = async (
+  token: string,
+  input: RefreshSessionInput
+): Promise<{ response: AuthResponsePayload; sessionToken: string; maxAgeSeconds: number }> => {
+  let payload;
+  try {
+    payload = await verifySessionToken(token);
+  } catch (error) {
+    throw new UnauthorizedError("Invalid or expired session.");
+  }
+
+  const adminClient = createSupabaseAdminClient();
+  const caregiver = await findCaregiverById(adminClient, payload.sub!);
+
+  const session = await createSessionToken({
+    caregiverId: caregiver.id,
+    authUserId: caregiver.authUserId,
+    email: caregiver.email,
+    consentVersion: payload.consentVersion ?? consentVersion(),
+    keepSignedIn: input.keepSignedIn ?? (payload.keepSignedIn ?? false)
+  });
+
+  return {
+    sessionToken: session.token,
+    maxAgeSeconds: session.maxAgeSeconds,
+    response: {
+      caregiverId: caregiver.id,
+      sessionExpiresAt: session.expiresAt.toISOString(),
+      subscription: buildSubscriptionStub()
+    }
+  };
+};
+
+export const requestPasswordReset = async (input: PasswordResetRequestInput) => {
+  const client = createSupabaseAnonClient();
+  const redirectTo = process.env.PASSWORD_RESET_REDIRECT_URL;
+  const { error } = await client.auth.resetPasswordForEmail(input.email, {
+    redirectTo: redirectTo && redirectTo.length > 0 ? redirectTo : undefined
+  });
+
+  if (error) {
+    throw new ApplicationError("password_reset_failed", error.message);
+  }
+};
+
+export const confirmPasswordReset = async (input: PasswordResetConfirmInput) => {
+  let payload: { sub?: string };
+  try {
+    payload = decodeJwt(input.accessToken);
+  } catch (error) {
+    throw new UnauthorizedError("Invalid access token.");
+  }
+
+  if (!payload.sub) {
+    throw new UnauthorizedError("Missing token subject.");
+  }
+
+  const adminClient = createSupabaseAdminClient();
+  const { error } = await adminClient.auth.admin.updateUserById(payload.sub, {
+    password: input.password
+  });
+
+  if (error) {
+    throw new ApplicationError("password_reset_failed", error.message);
+  }
 };
