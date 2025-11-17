@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { BadgeCheck, Check, CreditCard } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -77,8 +78,13 @@ const SubscriptionPage = () => {
       </div>
 
       {status && (
-        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-          {status}
+        <div className="space-y-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+          <p>{status}</p>
+          <Link href="/home" className="inline-flex">
+            <Button variant="secondary" size="sm">
+              Ir para o painel principal
+            </Button>
+          </Link>
         </div>
       )}
     </div>

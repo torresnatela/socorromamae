@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ShieldCheck, UserRound } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -16,6 +17,7 @@ type CaregiverForm = {
 };
 
 const CaregiverRegistrationPage = () => {
+  const router = useRouter();
   const [form, setForm] = useState<CaregiverForm>({
     fullName: "",
     email: "",
@@ -23,7 +25,6 @@ const CaregiverRegistrationPage = () => {
     address: "",
     password: ""
   });
-  const [note, setNote] = useState<string | null>(null);
 
   const handleChange = (key: keyof CaregiverForm) => (value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -31,9 +32,7 @@ const CaregiverRegistrationPage = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    setNote(
-      `Cadastro do cuidador salvo (mock). ${form.fullName || "Responsável"} será conectado ao backend mais tarde.`
-    );
+    router.push("/subscription");
   };
 
   return (
@@ -123,13 +122,8 @@ const CaregiverRegistrationPage = () => {
 
         <div className="lg:col-span-2 flex flex-col gap-3">
           <Button type="submit" size="lg" className="w-full md:w-auto">
-            Concluir cadastro
+            Ir para pagamento
           </Button>
-          {note && (
-            <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-              {note}
-            </div>
-          )}
         </div>
       </form>
     </div>

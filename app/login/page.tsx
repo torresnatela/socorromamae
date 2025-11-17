@@ -92,9 +92,9 @@ const LoginPage = () => {
         </form>
 
         <p className="mt-6 text-center text-sm text-neutral-600">
-          Não tem conta?{" "}
-          <Link href="/register/caregiver" className="font-semibold text-purple-700 hover:underline">
-            Criar nova
+          Não tem conta?
+          <Link href="/register/child" className="font-semibold text-purple-700 hover:underline">
+            Começar cadastro
           </Link>
         </p>
       </Card>

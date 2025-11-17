@@ -1,11 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Baby } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 
 type ChildForm = {
@@ -13,19 +13,16 @@ type ChildForm = {
   birthDate: string;
   weight: string;
   height: string;
-  caregiverEmail?: string;
 };
 
 const ChildRegistrationPage = () => {
+  const router = useRouter();
   const [form, setForm] = useState<ChildForm>({
     name: "",
     birthDate: "",
     weight: "",
-    height: "",
-    caregiverEmail: ""
+    height: ""
   });
-  const [shareWithCaregiver, setShareWithCaregiver] = useState(false);
-  const [saved, setSaved] = useState<string | null>(null);
 
   const handleChange = (key: keyof ChildForm) => (value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -33,14 +30,7 @@ const ChildRegistrationPage = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const ageLabel = form.birthDate
-      ? `${Math.max(1, new Date().getFullYear() - new Date(form.birthDate).getFullYear())} anos`
-      : "—";
-    setSaved(
-      `Cadastro salvo (mock). ${form.name || "Criança"} tem ${ageLabel}. Compartilhar: ${
-        shareWithCaregiver ? "sim" : "não"
-      }.`
-    );
+    router.push("/register/caregiver");
   };
 
   return (
@@ -110,49 +100,15 @@ const ChildRegistrationPage = () => {
           </div>
         </Card>
 
-        <Card className="p-6 space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-neutral-900">Compartilhar com cuidador</p>
-              <p className="text-sm text-neutral-600">
-                Permite que avós, pais ou creche vejam os dados (mock).
-              </p>
-            </div>
-            <Switch
-              checked={shareWithCaregiver}
-              onChange={(e) => setShareWithCaregiver(e.target.checked)}
-              aria-label="Compartilhar com outro cuidador"
-            />
-          </div>
-
-          {shareWithCaregiver && (
-            <div className="space-y-2">
-              <Label htmlFor="caregiverEmail">Email do cuidador</Label>
-              <Input
-                id="caregiverEmail"
-                type="email"
-                placeholder="exemplo@email.com"
-                value={form.caregiverEmail}
-                onChange={(e) => handleChange("caregiverEmail")(e.target.value)}
-              />
-            </div>
-          )}
-
-          <div className="space-y-2 rounded-xl bg-neutral-50 p-4 text-sm text-neutral-700">
-            <p className="font-semibold text-neutral-900">LGPD</p>
-            <p>Somente UI: nenhuma chamada de API ou armazenamento local nesta etapa.</p>
-          </div>
+        <Card className="p-6 space-y-2 rounded-xl bg-neutral-50 text-sm text-neutral-700">
+          <p className="font-semibold text-neutral-900">LGPD</p>
+          <p>Somente UI: nenhuma chamada de API ou armazenamento local nesta etapa.</p>
         </Card>
 
         <div className="lg:col-span-2 flex flex-col gap-3">
           <Button type="submit" size="lg" className="w-full md:w-auto">
-            Salvar cadastro
+            Continuar para cuidador
           </Button>
-          {saved && (
-            <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-              {saved}
-            </div>
-          )}
         </div>
       </form>
     </div>

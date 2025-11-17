@@ -6,11 +6,7 @@ import { cn } from "@/lib/utils";
 import { UrlObject } from "url";
 
 const links = [
-  { href: "/", label: "Início" },
-  { href: "/login", label: "Login" },
-  { href: "/register/child", label: "Cadastro criança" },
-  { href: "/register/caregiver", label: "Cadastro cuidador" },
-  { href: "/subscription", label: "Assinatura" },
+  { href: "/home", label: "Painel" },
   { href: "/chat", label: "Chat" },
   { href: "/progress", label: "Progresso" },
   { href: "/health", label: "Health" }
