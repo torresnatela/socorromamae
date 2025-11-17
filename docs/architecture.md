@@ -59,6 +59,14 @@ Create `.env` files per app that import from `packages/config/env.ts`. Critical 
 
 Backend API never exposes Supabase service keys to frontend code. Client components always hit `/api` handlers for privileged actions; direct Supabase client usage is limited to server components (e.g., for SSR) or to read-only anon operations.
 
+## Local Development Environment Strategy
+- **Compose the full stack locally:** Use the Supabase CLI (`supabase init && supabase start`) to generate the official Docker Compose stack (Postgres, Auth, Realtime, Storage, Edge Functions). Commit the generated `supabase/` folder so every developer can `docker compose up` the same services without relying on Supabase's paid preview environments.
+- **Co-locate the app containers:** Define a root-level `docker-compose.yml` that extends the Supabase services with our Next.js app container (hot-reloading via bind mounts) and any supporting workers. Expose the default Supabase ports (54321 API, 54322 Postgres, 54323 Studio) so SDK configuration matches production URLs/keys; point `SUPABASE_URL=http://localhost:54321`.
+- **Persist but resettable state:** Back Supabase Postgres/Storage with named Docker volumes (`supabase-db`, `supabase-storage`). Provide `make db-reset` (wraps `supabase db reset --seed`) to drop/reseed while leaving other containers running. All schema changes flow through Prisma/Drizzle migrations checked into source control so local, CI, and cloud stay in sync.
+- **Deterministic data + buckets:** Ship SQL/seed scripts plus a storage bootstrap script (e.g., `supabase functions serve seed-storage.ts`) that loads fixture caregivers, subscriptions, and bucket objects. On fresh checkout developers run `make bootstrap` → installs npm packages, starts Docker, applies migrations, loads sample assets.
+- **Secrets & configuration layering:** Track `.env.example` with required variables plus Supabase anon/service-role keys returned by `supabase start`. Each developer keeps real secrets in `.env.local`; docker-compose references that file via `env_file`. For reliability, also check in `docker-compose.override.yml` template showing how to expose extra ports or connect external debuggers.
+- **Developer experience guardrails:** Document the workflow in `README.md` and add shortcuts (`make dev`, `make stop`, `make logs supabase-db`). Optional niceties: VS Code Dev Containers referencing the same compose stack, Traefik for pretty hostnames (`app.localhost`, `studio.localhost`), and a `scripts/open-studio.sh` helper that opens Supabase Studio once services start.
+
 ## System Context
 ```
 Next.js App Router UI (Vercel) --> Next.js API routes (same deployment, edge/serverless)
