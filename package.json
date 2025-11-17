@@ -7,15 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.1",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.553.0",
+    "jose": "^5.9.3",
     "next": "14.2.11",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "ulid": "^2.3.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -29,10 +31,8 @@
     "autoprefixer": "^10.4.20",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.11",
-    "jsdom": "^27.2.0",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
+    "tsx": "^4.20.6",
     "typescript": "^5.5.4",
-    "vitest": "^4.0.9"
+    "vitest": "^2.1.1"
   }
 }

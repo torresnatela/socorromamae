@@ -25,6 +25,8 @@ Copy `.env.example` to `.env` and populate each value according to your Supabase
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key for browser Supabase client | Supabase dashboard |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Server-only** service key used by API routes | Supabase dashboard |
 | `AUTH_JWT_SECRET` | Secret placeholder for upcoming auth work | Generate locally |
+| `LGPD_CONSENT_VERSION` | Version identifier logged with each acceptance | Product/legal |
+| `PASSWORD_RESET_REDIRECT_URL` | URL where Supabase directs password reset flows | App Router route (e.g., https://localhost:3000/auth/reset) |
 
 > Each developer keeps a personal `.env.local` that overrides shared secrets. Never commit `.env*` files except `.env.example`.
 

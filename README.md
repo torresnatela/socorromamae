@@ -16,6 +16,7 @@ The default page (`app/page.tsx`) reads `/api/health`, which pings Supabase usin
 
 ```
 app/                 # App Router, UI + API routes
+docs/api/authentication.md # Auth API contracts + testing guide
 lib/supabase.ts      # Shared Supabase client helpers
 public/              # Static assets
 docs/                # Requirements + stories
@@ -28,6 +29,16 @@ docs/                # Requirements + stories
 | `NEXT_PUBLIC_SUPABASE_URL` | Project URL copied from Supabase dashboard |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Public anon key for browser reads |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only service role key used in API routes |
-| `AUTH_JWT_SECRET` | Placeholder for upcoming auth work |
+| `AUTH_JWT_SECRET` | Secret used to sign caregiver session JWTs |
+| `LGPD_CONSENT_VERSION` | Version string logged whenever LGPD terms are accepted |
+| `PASSWORD_RESET_REDIRECT_URL` | URL Supabase uses when caregiver clicks reset link |
+
+### Testing & QA
+
+Backend unit tests run via `pnpm test` (Vitest + Testing Library). API smoke tests with Playwright are pending (see Story 1.1 Testing section).
+
+## Auth API
+
+The backend exposes `/api/v1/auth/{signup,login,logout,me,refresh,password-reset,password-reset/confirm}`. Payloads and curl examples are at `docs/api/authentication.md`.
 
 Populate `.env` locally and avoid committing secrets. Once the app grows, we can introduce stricter tooling again.

@@ -1,0 +1,64 @@
+schema: 1
+story: '1.1'
+story_title: 'Caregiver Authentication & LGPD Consent'
+gate: FAIL
+status_reason: 'LGPD consent experience is missing end-to-end and backend login/me endpoints cannot enforce acceptance, so compliance is not guaranteed.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-11-16T23:04:18Z'
+top_issues:
+  - id: QA-1
+    title: 'Auth UI and consent gating layouts not implemented'
+    severity: high
+    suggested_owner: dev
+    details: 'App Router still exposes only the health landing page, so caregivers cannot see signup/login forms, LGPD checkbox, or gated layouts required by AC1-AC2.'
+    refs:
+      - 'app/page.tsx:1'
+      - 'docs/stories/1.1.caregiver-auth-lgpd-consent.md:31'
+  - id: QA-2
+    title: 'Backend login/me flows ignore consent records'
+    severity: high
+    suggested_owner: dev
+    details: 'loginCaregiver and getCurrentCaregiver never read caregiver_consents or consent version mismatches, meaning previously onboarded caregivers (or ones missing consent) can still obtain sessions.'
+    refs:
+      - 'src/domain/auth/service.ts:82'
+      - 'src/domain/auth/service.ts:121'
+  - id: QA-3
+    title: 'Required Playwright API integration tests and CI wiring absent'
+    severity: medium
+    suggested_owner: dev
+    details: 'Story tasks call for Playwright coverage of /api/v1/auth/signup|login|me plus documentation for QA to extend the suite, but the repo only contains Vitest unit tests and no CI instructions.'
+    refs:
+      - 'package.json:5'
+      - 'docs/stories/1.1.caregiver-auth-lgpd-consent.md:35'
+waiver:
+  active: false
+quality_score: 60
+expires: '2025-11-30T23:04:18Z'
+evidence:
+  tests_reviewed: 9
+  risks_identified: 3
+  trace:
+    ac_covered: [3]
+    ac_gaps: [1, 2]
+nfr_validation:
+  security:
+    status: FAIL
+    notes: 'Consent is not enforced during login/me, so unauthorized processing of personal data is possible.'
+  performance:
+    status: PASS
+    notes: 'No perf regressions observed in the limited scope implemented.'
+  reliability:
+    status: CONCERNS
+    notes: 'Lack of integration/E2E coverage leaves API flows unverified against Supabase and cookies.'
+  maintainability:
+    status: CONCERNS
+    notes: 'Missing UI/gating structure makes the story incomplete and prevents reuse by downstream work.'
+recommendations:
+  immediate:
+    - action: 'Implement auth UI `(unauth)` segment, LGPD checkbox, and `(gated)` consent guard before merging.'
+      refs: ['app/page.tsx:1']
+    - action: 'Extend login/me services to read caregiver_consents, enforce latest version, and return consent metadata for gating.'
+      refs: ['src/domain/auth/service.ts:82']
+  future:
+    - action: 'Introduce Playwright API suite + CI job so QA can run contract tests offline as described in story tasks.'
+      refs: ['package.json:5']
