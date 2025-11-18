@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sparkles, Send, MessageCircle, BarChart3, Trash2, Baby, ListChecks } from "lucide-react";
+import { AuthGuard } from "@/components/auth/auth-guard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,8 +59,9 @@ const ChatPage = () => {
   const handleClear = () => setMessages([]);
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-      <Card className="p-6 space-y-4">
+    <AuthGuard requireConsent>
+      <section className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+        <Card className="p-6 space-y-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Avatar name={mockChild.name} className="h-11 w-11" />
@@ -164,8 +166,9 @@ const ChatPage = () => {
             ))}
           </div>
         </div>
-      </Card>
-    </section>
+        </Card>
+      </section>
+    </AuthGuard>
   );
 };
 

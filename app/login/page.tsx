@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
   Baby,
@@ -24,6 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import type { ApiErrorPayload } from "@/lib/api-response";
 import type { AuthResponsePayload } from "@/src/domain/auth/types";
+import type { SessionSnapshot } from "@/src/domain/auth/session";
 
 type ApiResponse<T> = {
   meta: {
@@ -45,9 +47,28 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 const LoginPage = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Supabase recovery links often land on /login with access_token in the hash.
+  // If present, redirect straight to reset-password carrying the token.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const recoveryToken =
+      hashParams.get("access_token") ??
+      hashParams.get("token") ??
+      hashParams.get("code") ??
+      hashParams.get("auth_token");
+    const isRecovery = hashParams.get("type") === "recovery";
+
+    if (recoveryToken && isRecovery) {
+      router.replace(`/reset-password?access_token=${encodeURIComponent(recoveryToken)}`);
+    }
+  }, [router]);
 
   const {
     control,
@@ -80,6 +101,15 @@ const LoginPage = () => {
       if (!response.ok || payload.error || !payload.data) {
         throw new Error(payload.error?.message ?? "Não foi possível entrar agora. Tente novamente.");
       }
+
+      // Seed session cache so guards don’t bounce immediately after login.
+      const sessionSnapshot: SessionSnapshot = {
+        caregiverId: payload.data.caregiverId,
+        sessionExpiresAt: payload.data.sessionExpiresAt,
+        subscription: payload.data.subscription,
+        consentAccepted: true
+      };
+      queryClient.setQueryData(["session"], sessionSnapshot);
 
       setSuccessMessage("Login realizado! Redirecionando para seu painel.");
       setTimeout(() => router.push("/home"), 600);
@@ -160,6 +190,11 @@ const LoginPage = () => {
             {errors.password?.message && (
               <p className="text-xs text-red-600">{errors.password.message}</p>
             )}
+          </div>
+          <div className="flex justify-end">
+            <Link href="/forgot-password" className="text-sm font-semibold text-purple-700 hover:underline">
+              Esqueci minha senha
+            </Link>
           </div>
 
           <Controller
