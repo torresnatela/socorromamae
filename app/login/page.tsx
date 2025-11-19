@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,8 +15,7 @@ import {
   EyeOff,
   LoaderCircle,
   Lock,
-  Mail,
-  ShieldCheck
+  Mail
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -123,183 +122,163 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-      <Card className="p-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-700 text-white shadow-sm">
-            <Baby className="h-6 w-6" />
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-[var(--background)] dark:to-[var(--background)] flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg">
+            <Baby className="h-8 w-8" />
           </div>
-          <div>
-            <p className="text-sm uppercase tracking-[0.18em] text-purple-700 font-semibold">
-              Socorro Mamãe
-            </p>
-            <h1 className="text-2xl font-semibold text-neutral-900">Entre com sua conta</h1>
-            <p className="text-sm text-neutral-600">
-              Autenticação real via API. Cookies seguros serão definidos pelo backend.
-            </p>
-          </div>
+          <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+            Socorro Mamãe
+          </h1>
+          <p className="text-sm text-neutral-600 dark:text-neutral-300">ByeBye Fralda</p>
         </div>
 
-        <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
-          <div className="space-y-2">
-            <Label className="text-sm font-semibold text-neutral-800" htmlFor="email">
-              Email
-            </Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
-              <Input
-                id="email"
-                type="email"
-                placeholder="cuidador@email.com"
-                className="pl-10"
-                autoComplete="email"
-                aria-invalid={!!errors.email}
-                {...register("email")}
-              />
-            </div>
-            {errors.email?.message && (
-              <p className="text-xs text-red-600">{errors.email.message}</p>
-            )}
-          </div>
+        <Card className="p-6 border border-neutral-200 shadow-lg dark:border-neutral-800">
+          <h2 className="text-center text-xl font-semibold text-neutral-900 dark:text-neutral-50 mb-6">
+            Entrar na sua conta
+          </h2>
 
-          <div className="space-y-2">
-            <Label className="text-sm font-semibold text-neutral-800" htmlFor="password">
-              Senha
-            </Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
-              <Input
-                id="password"
-                placeholder="••••••••"
-                className="pl-10 pr-12"
-                autoComplete="current-password"
-                aria-invalid={!!errors.password}
-                type={showPassword ? "text" : "password"}
-                {...register("password")}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((value) => !value)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 transition hover:text-neutral-800"
-                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-                aria-pressed={showPassword}
-              >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </button>
-            </div>
-            {errors.password?.message && (
-              <p className="text-xs text-red-600">{errors.password.message}</p>
-            )}
-          </div>
-          <div className="flex justify-end">
-            <Link href="/forgot-password" className="text-sm font-semibold text-purple-700 hover:underline">
-              Esqueci minha senha
-            </Link>
-          </div>
-
-          <Controller
-            control={control}
-            name="keepSignedIn"
-            render={({ field }) => (
-              <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
-                <div>
-                  <p className="text-sm font-semibold text-neutral-900">Manter-me conectado</p>
-                  <p className="text-xs text-neutral-600">
-                    Selecione para manter-se conectado.
-                  </p>
-                </div>
-                <Switch
-                  checked={field.value ?? false}
-                  onChange={(event) => field.onChange(event.target.checked)}
-                  onBlur={field.onBlur}
-                  ref={field.ref}
-                  aria-label="Manter-me conectado"
+          <form onSubmit={handleSubmit(handleLogin)} className="space-y-4">
+            <div>
+              <Label className="mb-2 block text-sm text-neutral-700 dark:text-neutral-300" htmlFor="email">
+                Email
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="cuidador@email.com"
+                  className="pl-10 h-12 rounded-xl"
+                  autoComplete="email"
+                  aria-invalid={!!errors.email}
+                  disabled={isSubmitting}
+                  {...register("email")}
                 />
               </div>
-            )}
-          />
-
-          {serverError && (
-            <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-              <AlertCircle className="mt-0.5 h-5 w-5" />
-              <div>
-                <p className="font-semibold">Não foi possível entrar</p>
-                <p>{serverError}</p>
-              </div>
+              {errors.email?.message && (
+                <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+              )}
             </div>
-          )}
 
-          {successMessage && (
-            <div className="flex items-start gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-              <CheckCircle2 className="mt-0.5 h-5 w-5" />
-              <div>
-                <p className="font-semibold">Login aprovado</p>
-                <p>{successMessage}</p>
+            <div>
+              <Label className="mb-2 block text-sm text-neutral-700 dark:text-neutral-300" htmlFor="password">
+                Senha
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
+                <Input
+                  id="password"
+                  placeholder="••••••••"
+                  className="h-12 rounded-xl pl-10 pr-12"
+                  autoComplete="current-password"
+                  aria-invalid={!!errors.password}
+                  disabled={isSubmitting}
+                  type={showPassword ? "text" : "password"}
+                  {...register("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 transition hover:text-neutral-800 dark:hover:text-neutral-100"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
+              <div className="mt-2 flex items-center justify-between text-sm">
+                <Link
+                  href="/forgot-password"
+                  className="font-semibold text-purple-700 hover:underline"
+                >
+                  Esqueci minha senha
+                </Link>
+              </div>
+              {errors.password?.message && (
+                <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
+              )}
             </div>
-          )}
 
-          <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? (
-              <>
-                <LoaderCircle className="h-5 w-5 animate-spin" />
-                Validando...
-              </>
-            ) : (
-              "Entrar"
+            <Controller
+              control={control}
+              name="keepSignedIn"
+              render={({ field }) => (
+                <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm dark:border-neutral-800 dark:bg-neutral-900">
+                  <div>
+                    <p className="font-semibold text-neutral-900 dark:text-neutral-100">Manter-me conectado</p>
+                    <p className="text-neutral-600 dark:text-neutral-400">Sessão extensa em dispositivos confiáveis.</p>
+                  </div>
+                  <Switch
+                    checked={field.value ?? false}
+                    onChange={(event) => field.onChange(event.target.checked)}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                    aria-label="Manter-me conectado"
+                    disabled={isSubmitting}
+                  />
+                </div>
+              )}
+            />
+
+            {serverError && (
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                <AlertCircle className="mt-0.5 h-5 w-5" />
+                <div>
+                  <p className="font-semibold">Não foi possível entrar</p>
+                  <p>{serverError}</p>
+                </div>
+              </div>
             )}
-          </Button>
-        </form>
 
-        <p className="mt-6 text-center text-sm text-neutral-600">
-          Não tem conta?
-          <br/>
-          <Link href="/register/child" className="font-semibold text-purple-700 hover:underline">
-            Começar cadastro
+            {successMessage && (
+              <div className="flex items-start gap-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+                <CheckCircle2 className="mt-0.5 h-5 w-5" />
+                <div>
+                  <p className="font-semibold">Login aprovado</p>
+                  <p>{successMessage}</p>
+                </div>
+              </div>
+            )}
+
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isSubmitting}
+              className="w-full h-12 bg-purple-600 hover:bg-purple-700 rounded-xl text-white"
+            >
+              {isSubmitting ? (
+                <>
+                  <LoaderCircle className="h-5 w-5 animate-spin" />
+                  Entrando...
+                </>
+              ) : (
+                "Entrar"
+              )}
+            </Button>
+          </form>
+        </Card>
+
+        <div className="text-center space-y-4">
+          <p className="text-neutral-600 text-sm dark:text-neutral-300">
+            Não tem uma conta?
+          </p>
+          <Link
+            href="/register/child"
+            aria-disabled={isSubmitting}
+            tabIndex={isSubmitting ? -1 : 0}
+            className="inline-flex w-full h-12 items-center justify-center rounded-xl border border-purple-600 text-purple-600 hover:bg-purple-50 font-semibold transition disabled:opacity-60 aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
+          >
+            Criar nova conta
           </Link>
-        </p>
-      </Card>
-
-      <Card className="p-6 bg-neutral-50">
-        <h2 className="text-lg font-semibold text-neutral-900">Fluxo de autenticação</h2>
-        <div className="mt-2 space-y-3 text-neutral-700">
-          <p className="flex items-start gap-2">
-            <ShieldCheck className="mt-1 h-5 w-5 text-purple-700" />
-            <span>Chamada real para `/api/v1/auth/login` com envelope de erro exibido no formulário.</span>
-          </p>
-          <p className="flex items-start gap-2">
-            <ShieldCheck className="mt-1 h-5 w-5 text-purple-700" />
-            <span>Cookie HTTP-only é configurado pelo backend; o toggle define sessões de 30 dias.</span>
-          </p>
-          <p className="flex items-start gap-2">
-            <ShieldCheck className="mt-1 h-5 w-5 text-purple-700" />
-            <span>Mensagens em português e validação de email/senha via React Hook Form + Zod.</span>
+          <p className="text-neutral-500 text-xs dark:text-neutral-400">
+            Ao entrar, você concorda com nossos Termos de Uso
           </p>
         </div>
-
-        <div className="mt-5 space-y-3">
-          <FeatureItem
-            title="Redirecionamento pós-login"
-            description="Após sucesso, o usuário segue para /home com feedback imediato."
-          />
-          <FeatureItem
-            title="Tratativa de erro"
-            description="Erros de credenciais aparecem no formulário, mantendo os dados digitados."
-          />
-        </div>
-      </Card>
+      </div>
     </div>
   );
 };
-
-const FeatureItem = ({ title, description }: { title: string; description: string }) => (
-  <div className="flex items-start gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3">
-    <div className="mt-1 h-2 w-2 rounded-full bg-purple-600" />
-    <div>
-      <p className="font-semibold text-neutral-900">{title}</p>
-      <p className="text-sm text-neutral-600">{description}</p>
-    </div>
-  </div>
-);
 
 export default LoginPage;
