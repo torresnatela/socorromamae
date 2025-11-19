@@ -19,16 +19,12 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       />
       <span
         className={cn(
-          "block h-6 w-11 rounded-full bg-neutral-300 transition peer-checked:bg-brand-purple",
+          "relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full bg-neutral-300 transition-colors duration-200 peer-checked:bg-brand-purple",
+          // Use pseudo-element for the thumb so peer-checked can move it (must be a sibling of the input)
+          "after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform after:duration-200 after:ease-in-out peer-checked:after:translate-x-5",
           className
         )}
-      >
-        <span
-          className={cn(
-            "absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition peer-checked:translate-x-5"
-          )}
-        />
-      </span>
+      />
     </label>
   )
 );

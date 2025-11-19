@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Questrial } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/navigation/app-shell";
+import { AppProviders } from "@/app/providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +26,9 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="pt-BR" className={`${inter.variable} ${questrial.variable}`}>
     <body className="bg-[var(--shell-bg)] text-[var(--shell-text)] antialiased">
-      <AppShell>{children}</AppShell>
+      <AppProviders>
+        <AppShell>{children}</AppShell>
+      </AppProviders>
     </body>
   </html>
 );

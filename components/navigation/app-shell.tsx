@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { MainNav } from "@/components/navigation/main-nav";
 
-const HIDDEN_NAV_PREFIXES = ["/login", "/register", "/subscription"];
+const HIDDEN_NAV_PREFIXES = ["/login", "/register", "/subscription", "/forgot-password", "/reset-password"];
 
 const shouldHideNav = (pathname: string | null) => {
   if (!pathname) return false;
